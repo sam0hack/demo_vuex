@@ -3,7 +3,13 @@
     Vuex todo app
     <br />
     <div class="todos">
-      <div class="todo" v-for="todo  in allTodos " :key="todo.id">
+      <div
+        @dblclick="onDblClick(todo)"
+        class="todo"
+        v-bind:class="{is_complete:todo.completed}"
+        v-for="todo  in allTodos "
+        :key="todo.id"
+      >
         {{todo.title}}
         <span class="delete" @click="deleteTodo(todo.id)">x</span>
       </div>
@@ -16,7 +22,18 @@ import { mapGetters, mapActions } from "vuex";
 
 export default {
   name: "Todos",
-  methods: { ...mapActions(["fetchTodos", "deleteTodo"]) },
+  methods: {
+    ...mapActions(["fetchTodos", "deleteTodo", "updateTodo"]),
+    onDblClick(todo) {
+      const updTodo = {
+        id: todo.id,
+        title: todo.title,
+        completed: !todo.completed
+      };
+
+      this.updateTodo(updTodo);
+    }
+  },
   computed: mapGetters(["allTodos"]),
   created() {
     this.fetchTodos();
@@ -26,6 +43,14 @@ export default {
 
 
 <style scoped>
+.is_complete {
+  background: greenyellow !important;
+}
+
+.incomplete {
+  display: inline-block;
+}
+
 .todos {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
